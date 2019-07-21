@@ -2,7 +2,6 @@ package com.fanghr.springdemo.model;
 
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 /**
@@ -11,8 +10,6 @@ import java.io.Serializable;
  * Date : 2019/7/20
  * Time : 8:37 PM
  */
-@Setter
-@Getter
 @ToString
 @Builder
 @Data
