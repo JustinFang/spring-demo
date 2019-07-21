@@ -32,6 +32,6 @@ public interface UserMapper {
 
 
     @Insert("insert into user(name, age) values(#{name}, #{age})")
-    @Options(useGeneratedKeys = true)
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     public int addUser(User user);
 }

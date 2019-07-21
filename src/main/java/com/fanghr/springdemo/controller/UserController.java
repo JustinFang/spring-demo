@@ -4,12 +4,18 @@ import com.fanghr.springdemo.controller.request.UserRequest;
 import com.fanghr.springdemo.model.User;
 import com.fanghr.springdemo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,5 +61,29 @@ public class UserController {
                 .age(userRequest.getAge())
                 .build();
         return userService.addUser(user);
+    }
+
+    @PostMapping(value = "/batchAdd", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public List<User> batchAddUser(@RequestParam MultipartFile file) {
+        List<User> users = new ArrayList<>();
+        if (!file.isEmpty()) {
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+                String str = null;
+                while ( (str = reader.readLine()) != null) {
+                    String[] arr = str.split(" ");
+                    User user = User.builder().name(arr[0]).age(arr[1]).build();
+                    userService.addUser(user);
+                    users.add(user);
+                }
+            } catch (IOException e) {
+                log.error("file io exception: {}", e);
+            } finally {
+                IOUtils.closeQuietly(reader);
+            }
+        }
+
+        return users;
     }
 }
